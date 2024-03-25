@@ -1,0 +1,36 @@
+hosting python webapp using jekins
+
+
+pipeline{
+    agent{
+        label 'label1'
+    }
+    stages{
+        stage('Pull a file from git')
+        {
+            steps{
+                git 'https://github.com/Spidy20/DALLE_Image_Generator.git'
+            }
+        }
+        stage('Installing Python')
+        {
+            steps{
+                sh " sudo apt-get update"
+                sh " sudo apt-get install python3 -y"
+                sh " sudo apt install python3-pip -y"
+            }
+        }
+        stage('Installing Requirements')
+        {
+            steps{
+                sh "sudo pip3 install -r requirements.txt"
+            }
+        }
+        stage('Streamlit')
+        {
+            steps{
+                sh " sudo pip3 install streamlit"
+            }
+        }
+    }
+}
