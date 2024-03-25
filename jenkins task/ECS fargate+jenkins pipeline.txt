@@ -1,0 +1,59 @@
+ECS fargate+jenkins pipeline
+
+1) create a cluster-->cluster-->name
+2) select AWS farget (serverless)
+3) create
+4) create a 1 instance (master-instance) configure it. add IAM role to the instance (aws full access fargate)
+5) connect (master-instance) to install jenkins using all this command
+    
+  $  sudo wget -O /usr/share/keyrings/jenkins-keyring.asc \
+  $  https://pkg.jenkins.io/debian-stable/jenkins.io-2023.key
+  $  echo deb [signed-by=/usr/share/keyrings/jenkins-keyring.asc] \
+  $  https://pkg.jenkins.io/debian-stable binary/ | sudo tee \
+  $  /etc/apt/sources.list.d/jenkins.list > /dev/null
+
+
+  $ sudo apt-get update
+  $ sudo apt-get install jenkins
+  $ sudo systemctl start jenkins
+
+
+6) Add jenkins plugin:-- AWS ECS fargate
+7) plugins:-- SSH agent, amazon ECS plugins fargate, blue ocean
+8) addtional security:-- agent-->fixed-->5000
+                        TCP port-->5000
+
+9) create a cloud:-- new cloud-->agent-->create-->configure 
+                     1) amazon ecs region-->(your instance region)
+                     2) amzon IAM role-->(your iam role ARN)
+                     3) tunnel connection through--(instance IP address:5000)
+                     4) add-->label-->simple-->aws-ecs
+                     5) docker image-->jenkins/inbound image
+                     6) launch type-->fargate
+                     7) platform -->LATEST
+                     8) soft memory reservation-->2048
+                     9) CPU units-->1024
+                     10) network mode-->AWS VPC
+                     11) subnets-->(your subnet id)
+                     12) security group-->(your instance group ID)
+                     13) assign public IP and SAVE
+
+create a new item-->ECS-->pipeline
+
+
+SCRIPT:----
+
+
+pipeline {
+    agent {
+        label 'simple'
+    }
+    stages {
+         stage(test){
+             step{
+                echo "hello this is batch b-24"
+         }
+      }
+   }
+}
+and build your script
